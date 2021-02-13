@@ -19,6 +19,8 @@ import asyncio
 class Game(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.joiner = False
+        self.mems = {}
 
 
     @commands.Cog.listener()
@@ -49,16 +51,36 @@ class Game(commands.Cog):
 
     @commands.command()
     async def start(self,ctx):
+        self.joiner = 0
+        self.mems = {}
         await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
+        self.joiner = True
         edit = await ctx.send("開始まで10秒")
         for i in range(10):
             num = 10 - i
             await edit.edit(content=f"開始まで{num}秒")
             await asyncio.sleep(0.9)
+        self.joiner = False
         await edit.delete()
         await ctx.send("参加者が決定しました。")
-        # await instant.wolf(self,ctx)
+        print(self.mems)
+        # if len(self.mems) <= 2:
+        #     await ctx.send("参加を希望したのが2名以下だったため、開始できません。\n停止します...")
+        #     return
+        # txt = "```\n"
+        # for name in self.mems.values():
+        #     txt += f"・{name}\n"
+        # await ctx.send(f"{txt}```")
+        await instant.wolf(self,ctx)
 
+    @commands.command()
+    async def join(self,ctx):
+        if self.joiner == False:
+            return
+        if ctx.author.id in self.mems:
+            return
+        self.mems[ctx.author.id] = ctx.author.name
+        await ctx.message.add_reaction("⭕")
 
 
 
