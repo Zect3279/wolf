@@ -102,7 +102,7 @@ class Game(commands.Cog):
         #     txt += f"・{name}\n"
         # await ctx.send(f"{txt}```")
         cel = self
-        self.jobs = instant.job(cel)
+        self.jobs = instant.job(cel,ctx)
         await ctx.send(self.jobs)
 
     @commands.command()
