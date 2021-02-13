@@ -73,6 +73,7 @@ class Game(commands.Cog):
         # await ctx.send(f"{txt}```")
         cel = self
         await instant.wolf(cel,ctx)
+        self.jobs = instant.job(cel)
 
     @commands.command()
     async def join(self,ctx):
