@@ -60,7 +60,9 @@ class instant:
         await voice.set_permissions(ctx.guild.roles[0],connect=False)
 
 
-
+    async def job(cel,ctx):
+        job = {}
+        return job
 
 
 
