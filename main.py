@@ -7,7 +7,12 @@ bot = Zect()
 
 
 
-bot.load_extension(f"cogs.wolf")
+extensions = [
+    "cogs.manage",
+    "cogs.instant",
+]
+for extension in extensions:
+    bot.load_extension(extension)
 
 bot.run(environ["BOT_TOKEN"])
 
