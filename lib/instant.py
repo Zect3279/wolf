@@ -19,7 +19,7 @@ class instant:
 
     def __init__(self, bot: Any):
         self.bot = bot
-        
+
     async def wolf(self,ctx):
         await ctx.guild.create_text_channel("welcome")
 

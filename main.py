@@ -8,8 +8,8 @@ bot = Zect()
 
 
 extensions = [
-    "cogs.manage",
-    "cogs.instant",
+    # "cogs.help",
+    "cogs.wolf",
 ]
 for extension in extensions:
     bot.load_extension(extension)

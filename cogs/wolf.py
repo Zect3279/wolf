@@ -10,7 +10,7 @@ import os
 import sys
 from dispander import dispand
 
-import lib.instant
+# import lib.instant
 
 
 
@@ -33,6 +33,7 @@ class Game(commands.Cog):
         for chan in ctx.guild.channels:
             await chan.delete()
 
+        all_role = ctx.guild.roles
         channel = await ctx.guild.create_text_channel("welcome")
         for rol in all_role:
             try:
