@@ -9,6 +9,7 @@ import asyncio
 import os
 import sys
 from dispander import dispand
+import asyncio
 
 # import lib.instant
 
@@ -51,9 +52,11 @@ class Game(commands.Cog):
         await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
         edit = await ctx.send("開始まで10秒")
         for i in range(10):
-            await edit.edit(f"開始まで{i}秒")
+            num = 10 - i
+            await edit.edit(content=f"開始まで{num}秒")
+            await asyncio.sleep(0.9)
         await edit.delete()
-        await ctx.send("開始します。")
+        await ctx.send("参加者が決定しました。")
         # await instant.wolf(self,ctx)
 
 
