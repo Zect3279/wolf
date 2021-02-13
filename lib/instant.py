@@ -23,8 +23,8 @@ class instant:
 
     async def wolf(ctx):
         on_role = await ctx.guild.create_role(name="人狼参加者")
-        no_role = await ctx.guild.create_role(name="観戦者")
         dead_role = await ctx.guild.create_role(name="死亡者")
+        no_role = await ctx.guild.create_role(name="観戦者")
 
         # self.mems = await lol.cho(self.mems)
 
