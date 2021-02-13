@@ -71,7 +71,8 @@ class Game(commands.Cog):
         # for name in self.mems.values():
         #     txt += f"・{name}\n"
         # await ctx.send(f"{txt}```")
-        await instant.wolf(self,ctx)
+        cel = self
+        await instant.wolf(cel,ctx)
 
     @commands.command()
     async def join(self,ctx):

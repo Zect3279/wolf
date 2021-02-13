@@ -21,7 +21,8 @@ class instant:
     def __init__(self, bot: Any):
         self.bot = bot
 
-    async def wolf(self,cel,ctx,mems):
+    async def wolf(cel,ctx):
+        self = cel
         self.mems = cel.mems
 
         # self.mems = await lol.cho(self.mems)
@@ -51,7 +52,7 @@ class instant:
         # await chan.set_permissions(ctx.guild.roles[0],read_messages=False)
         # await chan.set_permissions(self.mems.mad,read_messages=True)
 
-        category = await ctx.guild.create_category(name="志望者")
+        category = await ctx.guild.create_category(name="死亡者")
         await category.create_text_channel("反省会")
         voice = await category.create_voice_channel("反省会")
         await voice.edit(user_limit=50)
