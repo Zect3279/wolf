@@ -8,6 +8,7 @@ import random
 import asyncio
 import os
 import sys
+from typing import Union, Any, List, Tuple
 
 
 global anser
