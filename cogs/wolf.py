@@ -11,7 +11,7 @@ import sys
 from dispander import dispand
 import asyncio
 
-# import lib.instant
+from lib.instant import instant
 
 
 
