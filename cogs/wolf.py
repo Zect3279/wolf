@@ -31,6 +31,35 @@ class Game(commands.Cog):
     async def on_message(self, message):
         await dispand(message)
 
+    @commands.Cog.listener()
+    async def on_voice_state_update(self,member,before,after):
+        Grole = discord.utils.get(before.channel.guild.roles, name="人狼参加者")
+        if before.channel == after.channel:
+            return
+        try:
+            cname = before.channel.name
+            if cname != "観戦中":
+                return
+            channel = discord.utils.get(before.channel.guild.voice_channels, name=cname)
+            role = discord.utils.get(before.channel.guild.roles, name=cname)
+            await member.remove_roles(role)
+            await channel.send(f"{member.name} が退出しました。")
+        except:
+            a = "a"
+        finally:
+            try:
+                cname = after.channel.name
+                if cname != "観戦中":
+                    return
+                channel = discord.utils.get(after.channel.guild.voice_channels, name=cname)
+                role = discord.utils.get(after.channel.guild.roles, name=cname)
+                await member.add_roles(role)
+                await channel.send(f"{member.name} が参加しました。")
+            except:
+                a = "a"
+            finally:
+                a = "a"
+
     @commands.command()
     async def ready(self,ctx):
         for chan in ctx.guild.channels:
@@ -51,6 +80,7 @@ class Game(commands.Cog):
 
     @commands.command()
     async def start(self,ctx):
+        await instant.wolf(ctx)
         self.joiner = 0
         self.mems = {}
         await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
@@ -72,7 +102,6 @@ class Game(commands.Cog):
         #     txt += f"・{name}\n"
         # await ctx.send(f"{txt}```")
         cel = self
-        await instant.wolf(cel,ctx)
         self.jobs = instant.job(cel)
         await ctx.send(self.jobs)
 
