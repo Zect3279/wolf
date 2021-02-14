@@ -82,16 +82,16 @@ class Game(commands.Cog):
 
     @commands.command()
     async def delete(self,ctx):
-        await instant.del(ctx)
+        await self.instant.dele(ctx)
 
     @commands.command()
     async def start(self,ctx):
-        # await self.instant.wolf(ctx)
+        await self.instant.wolf(ctx)
         self.joiner = 0
         self.mems = {}
         await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
-        self.joiner = True
         edit = await ctx.send("開始まで10秒")
+        self.joiner = True
         for i in range(10):
             num = 10 - i
             await edit.edit(content=f"開始まで{num}秒")
