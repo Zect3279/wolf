@@ -81,6 +81,10 @@ class Game(commands.Cog):
         await voice.edit(user_limit=99)
 
     @commands.command()
+    async def delete(self,ctx):
+        await instant.del(ctx)
+
+    @commands.command()
     async def start(self,ctx):
         # await self.instant.wolf(ctx)
         self.joiner = 0

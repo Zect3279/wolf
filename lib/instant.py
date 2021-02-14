@@ -64,6 +64,33 @@ class inst():
         await voice.edit(user_limit=99)
         await voice.set_permissions(ctx.guild.roles[0],connect=False)
 
+
+    async def del(self,ctx):
+        all_role = ctx.guild.roles
+        channel = await ctx.guild.create_text_channel("welcome")
+        for rol in all_role:
+            try:
+                await rol.delete()
+            except:
+                a = "a"
+        channel = discord.utils.get(ctx.guild.text_channels, name='観戦')
+        for chan in channel.category.channels:
+            await chan.delete()
+        await ctx.channel.category.delete()
+        channel = discord.utils.get(ctx.guild.text_channels, name='反省会')
+        for chan in channel.category.channels:
+            await chan.delete()
+        await ctx.channel.category.delete()
+        channel = discord.utils.get(ctx.guild.text_channels, name='市民')
+        for chan in channel.category.channels:
+            await chan.delete()
+        await ctx.channel.category.delete()
+        channel = discord.utils.get(ctx.guild.text_channels, name='会議所')
+        for chan in channel.category.channels:
+            await chan.delete()
+        await ctx.channel.category.delete()
+
+
     def select(self,mem):
         if mem == 1:
             return ["村人", "人狼"]
