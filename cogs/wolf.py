@@ -94,8 +94,8 @@ class Game(commands.Cog):
         await edit.delete()
         await ctx.send("参加者が決定しました。")
         print(self.mems)
-        # if len(self.mems) <= 2:
-        #     await ctx.send("参加を希望したのが2名以下だったため、開始できません。\n停止します...")
+        # if len(self.mems) <= 3:
+        #     await ctx.send("参加を希望したのが3名以下だったため、開始できません。\n停止します...")
         #     return
         # txt = "```\n"
         # for name in self.mems.values():
@@ -104,6 +104,7 @@ class Game(commands.Cog):
         cel = self
         self.jobs = instant.job(cel,ctx)
         await ctx.send(self.jobs)
+        print(self.jobs)
 
     @commands.command()
     async def join(self,ctx):

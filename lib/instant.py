@@ -66,15 +66,14 @@ class instant:
         await voice.edit(user_limit=99)
         await voice.set_permissions(ctx.guild.roles[0],connect=False)
 
-
-    async def job(self,cel,ctx):
-        role = self.select(cel.mems)
-        job = {}
-        return job
-
-
     def select(self,mems):
         mem = len(mems.keys())
+        if mem == 1:
+            return ["村人", "人狼"]
+        if mem == 2:
+            return ["村人", "人狼"]
+        if mem == 3:
+            return ["村人", "占い師", "人狼"]
         if mem == 4:
             return ["村人", "村人", "占い師", "人狼"]
         if mem == 5:
@@ -111,10 +110,23 @@ class instant:
             return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼", "人狼"]
 
 
+    async def job(self,cel,ctx):
+        mems = cel.mems
+        role = self.select(mems)
+        random.shuffle(role)
+        job = {}
+        ids = mems.keys()
+        for i, id in enumerate(ids):
+            job[id] = role[i]
+        return job
 
 
-random.sample(role,len(role))
 
+
+
+cel_mems = {
+    member.id : member.name
+}
 
 
 job_sample = {
