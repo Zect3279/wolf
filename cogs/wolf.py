@@ -23,6 +23,7 @@ class Game(commands.Cog):
         self.mems = {}
         self.live = []
         self.dead = []
+        self.on_game = False
         self.instant = inst(bot)
         self.game = Master(bot)
 
@@ -68,6 +69,8 @@ class Game(commands.Cog):
 
     @commands.command()
     async def ready(self,ctx):
+        if self.on_game == True:
+            return
         for chan in ctx.guild.channels:
             await chan.delete()
 
@@ -86,6 +89,9 @@ class Game(commands.Cog):
 
     @commands.command()
     async def start(self,ctx):
+        if self.on_game == True:
+            return
+        self.on_game = True
         # make_channel = asyncio.create_task(self.instant.wolf(ctx))
         add_member = asyncio.create_task(self.count(ctx))
         # await make_channel
@@ -123,6 +129,8 @@ class Game(commands.Cog):
 
     @commands.command()
     async def delete(self,ctx):
+        if self.on_game == True:
+            return
         await self.instant.dele(ctx)
 
     async def count(self,ctx):
