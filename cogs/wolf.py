@@ -12,7 +12,7 @@ from dispander import dispand
 import asyncio
 
 from lib.instant import inst
-from lib.mastert import Master
+from lib.master import Master
 
 
 
@@ -21,6 +21,8 @@ class Game(commands.Cog):
         self.bot = bot
         self.joiner = False
         self.mems = {}
+        self.live = []
+        self.dead = []
         self.instant = inst(bot)
         self.game = Master(bot)
 
@@ -83,6 +85,43 @@ class Game(commands.Cog):
         await voice.edit(user_limit=99)
 
     @commands.command()
+    async def start(self,ctx):
+        # make_channel = asyncio.create_task(self.instant.wolf(ctx))
+        add_member = asyncio.create_task(self.count(ctx))
+        # await make_channel
+        await add_member
+        if not self.mems:
+            await ctx.send("no one")
+            return
+        # print(self.mems)
+        # if len(self.mems) <= 3:
+        #     await ctx.send("参加を希望したのが3名以下だったため、開始できません。\n停止します...")
+        #     return
+        # txt = "```\n"
+        # for name in self.mems.values():
+        #     txt += f"・{name}\n"
+        # await ctx.send(f"{txt}```")
+        cel = self
+        self.jobs = self.instant.job(cel,ctx)
+        await ctx.send(self.jobs)
+        await self.game.call(cel,ctx)
+        await self.game.box(cel,ctx,"＜未設定＞")
+        # await self.play(ctx)
+
+    @commands.command()
+    async def join(self,ctx):
+        if self.joiner == False:
+            return
+        if ctx.author.id in self.mems:
+            return
+        self.mems[ctx.author.id] = ctx.author.name
+        await ctx.message.add_reaction("⭕")
+
+    # @commands.command()
+    # async def play(self,ctx):
+    #     print("play has called")
+
+    @commands.command()
     async def delete(self,ctx):
         await self.instant.dele(ctx)
 
@@ -99,45 +138,6 @@ class Game(commands.Cog):
         self.joiner = False
         await edit.delete()
         await ctx.send("参加者が決定しました。")
-
-    @commands.command()
-    async def start(self,ctx):
-        make_channel = asyncio.create_task(self.instant.wolf(ctx))
-        add_member = asyncio.create_task(self.count(ctx))
-        await make_channel
-        await add_member
-        if not self.mems:
-            await ctx.send("no one")
-            return
-        # print(self.mems)
-        # if len(self.mems) <= 3:
-        #     await ctx.send("参加を希望したのが3名以下だったため、開始できません。\n停止します...")
-        #     return
-        # txt = "```\n"
-        # for name in self.mems.values():
-        #     txt += f"・{name}\n"
-        # await ctx.send(f"{txt}```")
-        cel = self
-        self.jobs = self.instant.job(cel,ctx)
-        await ctx.send(self.jobs)
-
-    @commands.command()
-    async def join(self,ctx):
-        if self.joiner == False:
-            return
-        if ctx.author.id in self.mems:
-            return
-        self.mems[ctx.author.id] = ctx.author.name
-        await ctx.message.add_reaction("⭕")
-
-
-
-# 人狼２
-# 市民３
-# 占い師１
-# 霊媒師１
-# 狩人１
-# 狂人１
 
 
 
