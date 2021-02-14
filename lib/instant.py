@@ -124,16 +124,16 @@ class instant:
 
 
 
-cel_mems = {
-    member.id : member.name
-}
-
-
-job_sample = {
-    member.id : "wolf",
-    member.id : "wolf",
-    member.id : "wolf",
-}
+# cel_mems = {
+#     member.id : member.name
+# }
+#
+#
+# job_sample = {
+#     member.id : "wolf",
+#     member.id : "wolf",
+#     member.id : "wolf",
+# }
 
 
 
