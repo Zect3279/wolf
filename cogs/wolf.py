@@ -12,6 +12,7 @@ from dispander import dispand
 import asyncio
 
 from lib.instant import inst
+from lib.mastert import Master
 
 
 
@@ -21,6 +22,7 @@ class Game(commands.Cog):
         self.joiner = False
         self.mems = {}
         self.instant = inst(bot)
+        self.game = Master(bot)
 
 
     @commands.Cog.listener()
@@ -31,36 +33,36 @@ class Game(commands.Cog):
     async def on_message(self, message):
         await dispand(message)
 
-    @commands.Cog.listener()
-    async def on_voice_state_update(self,member,before,after):
-        if after.channel.guild.name != "鯖改造":
-            return
-        Grole = discord.utils.get(before.channel.guild.roles, name="人狼参加者")
-        if before.channel == after.channel:
-            return
-        try:
-            cname = before.channel.name
-            if cname != "観戦中":
-                return
-            channel = discord.utils.get(before.channel.guild.voice_channels, name=cname)
-            role = discord.utils.get(before.channel.guild.roles, name=cname)
-            await member.remove_roles(role)
-            await channel.send(f"{member.name} が退出しました。")
-        except:
-            a = "a"
-        finally:
-            try:
-                cname = after.channel.name
-                if cname != "観戦中":
-                    return
-                channel = discord.utils.get(after.channel.guild.voice_channels, name=cname)
-                role = discord.utils.get(after.channel.guild.roles, name=cname)
-                await member.add_roles(role)
-                await channel.send(f"{member.name} が参加しました。")
-            except:
-                a = "a"
-            finally:
-                a = "a"
+    # @commands.Cog.listener()
+    # async def on_voice_state_update(self,member,before,after):
+    #     if after.channel.guild.name != "鯖改造":
+    #         return
+    #     Grole = discord.utils.get(before.channel.guild.roles, name="人狼参加者")
+    #     if before.channel == after.channel:
+    #         return
+    #     try:
+    #         cname = before.channel.name
+    #         if cname != "観戦中":
+    #             return
+    #         channel = discord.utils.get(before.channel.guild.voice_channels, name=cname)
+    #         role = discord.utils.get(before.channel.guild.roles, name=cname)
+    #         await member.remove_roles(role)
+    #         await channel.send(f"{member.name} が退出しました。")
+    #     except:
+    #         a = "a"
+    #     finally:
+    #         try:
+    #             cname = after.channel.name
+    #             if cname != "観戦中":
+    #                 return
+    #             channel = discord.utils.get(after.channel.guild.voice_channels, name=cname)
+    #             role = discord.utils.get(after.channel.guild.roles, name=cname)
+    #             await member.add_roles(role)
+    #             await channel.send(f"{member.name} が参加しました。")
+    #         except:
+    #             a = "a"
+    #         finally:
+    #             a = "a"
 
     @commands.command()
     async def ready(self,ctx):
@@ -84,9 +86,7 @@ class Game(commands.Cog):
     async def delete(self,ctx):
         await self.instant.dele(ctx)
 
-    @commands.command()
-    async def start(self,ctx):
-        await self.instant.wolf(ctx)
+    async def count(self,ctx):
         self.joiner = 0
         self.mems = {}
         await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
@@ -99,6 +99,13 @@ class Game(commands.Cog):
         self.joiner = False
         await edit.delete()
         await ctx.send("参加者が決定しました。")
+
+    @commands.command()
+    async def start(self,ctx):
+        make_channel = asyncio.create_task(self.instant.wolf(ctx))
+        add_member = asyncio.create_task(self.count(ctx))
+        await make_channel
+        await add_member
         if not self.mems:
             await ctx.send("no one")
             return
@@ -131,7 +138,6 @@ class Game(commands.Cog):
 # 霊媒師１
 # 狩人１
 # 狂人１
-
 
 
 

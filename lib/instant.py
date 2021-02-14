@@ -137,7 +137,9 @@ class inst():
         mems = cel.mems
         mem = len(mems.keys())
         role = self.select(mem)
+        print(role)
         random.shuffle(role)
+        print(role)
         job = {}
         ids = mems.keys()
         for i, id in enumerate(ids):
@@ -159,43 +161,3 @@ class inst():
 #     member.id : "wolf",
 #     member.id : "wolf",
 # }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def setup(bot):
-    bot.add_cog(Game(bot))
