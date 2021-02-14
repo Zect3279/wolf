@@ -21,7 +21,7 @@ class instant:
     def __init__(self, bot: Any):
         self.bot = bot
 
-    async def wolf(ctx):
+    async def wolf(self,ctx):
         on_role = await ctx.guild.create_role(name="人狼参加者")
         dead_role = await ctx.guild.create_role(name="死亡者")
         no_role = await ctx.guild.create_role(name="観戦者")
@@ -67,18 +67,61 @@ class instant:
         await voice.set_permissions(ctx.guild.roles[0],connect=False)
 
 
-    async def job(cel,ctx):
+    async def job(self,cel,ctx):
+        role = self.select(cel.mems)
         job = {}
         return job
 
 
+    def select(self,mems):
+        mem = len(mems.keys())
+        if mem == 4:
+            return ["村人", "村人", "占い師", "人狼"]
+        if mem == 5:
+            return ["村人", "村人", "村人", "占い師", "人狼"]
+        if mem == 6:
+            return ["村人", "村人", "霊媒師", "占い師", "狂人", "人狼"]
+        if mem == 7:
+            return ["村人", "村人", "村人", "霊媒師", "占い師", "狂人", "人狼"]
+        if mem == 8:
+            return ["村人", "村人", "村人", "霊媒師", "占い師", "狂人", "人狼", "人狼"]
+        if mem == 9:
+            return ["村人", "村人", "村人", "村人", "霊媒師", "占い師", "狂人", "人狼", "人狼"]
+        if mem == 10:
+            return ["村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "狂人", "人狼", "人狼"]
+        if mem == 11:
+            return ["村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "狂人", "人狼", "人狼"]
+        if mem == 12:
+            return ["村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼"]
+        if mem == 13:
+            return ["村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼"]
+        if mem == 14:
+            return ["村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼"]
+        if mem == 15:
+            return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼"]
+        if mem == 16:
+            return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼"]
+        if mem == 17:
+            return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼"]
+        if mem == 18:
+            return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼", "人狼"]
+        if mem == 19:
+            return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼", "人狼"]
+        if mem == 20:
+            return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼", "人狼"]
 
 
 
 
+random.sample(role,len(role))
 
 
 
+job_sample = {
+    member.id : "wolf",
+    member.id : "wolf",
+    member.id : "wolf",
+}
 
 
 
