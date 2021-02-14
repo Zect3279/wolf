@@ -14,10 +14,8 @@ from typing import Union, Any, List, Tuple
 global anser
 anser = False
 
-# vq.cmdから渡された引数を格納したリストの取得
 
-class instant:
-
+class inst():
     def __init__(self, bot: Any):
         self.bot = bot
 
@@ -66,8 +64,7 @@ class instant:
         await voice.edit(user_limit=99)
         await voice.set_permissions(ctx.guild.roles[0],connect=False)
 
-    def select(self,mems):
-        mem = len(mems.keys())
+    def select(self,mem):
         if mem == 1:
             return ["村人", "人狼"]
         if mem == 2:
@@ -110,14 +107,16 @@ class instant:
             return ["村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "村人", "てるてる", "霊媒師", "占い師", "占い師", "占い師", "狂人", "人狼", "人狼", "人狼", "人狼"]
 
 
-    async def job(self,cel,ctx):
+    def job(self,cel,ctx):
         mems = cel.mems
-        role = self.select(mems)
+        mem = len(mems.keys())
+        role = self.select(mem)
         random.shuffle(role)
         job = {}
         ids = mems.keys()
         for i, id in enumerate(ids):
             job[id] = role[i]
+        print(job)
         return job
 
 

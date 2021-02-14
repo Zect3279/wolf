@@ -11,8 +11,7 @@ import sys
 from dispander import dispand
 import asyncio
 
-from lib.instant import instant
-
+from lib.instant import inst
 
 
 
@@ -21,6 +20,7 @@ class Game(commands.Cog):
         self.bot = bot
         self.joiner = False
         self.mems = {}
+        self.instant = inst(bot)
 
 
     @commands.Cog.listener()
@@ -33,6 +33,8 @@ class Game(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self,member,before,after):
+        if after.channel.guild.name != "鯖改造":
+            return
         Grole = discord.utils.get(before.channel.guild.roles, name="人狼参加者")
         if before.channel == after.channel:
             return
@@ -80,7 +82,7 @@ class Game(commands.Cog):
 
     @commands.command()
     async def start(self,ctx):
-        await instant.wolf(ctx)
+        # await self.instant.wolf(ctx)
         self.joiner = 0
         self.mems = {}
         await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
@@ -93,7 +95,10 @@ class Game(commands.Cog):
         self.joiner = False
         await edit.delete()
         await ctx.send("参加者が決定しました。")
-        print(self.mems)
+        if not self.mems:
+            await ctx.send("no one")
+            return
+        # print(self.mems)
         # if len(self.mems) <= 3:
         #     await ctx.send("参加を希望したのが3名以下だったため、開始できません。\n停止します...")
         #     return
@@ -102,9 +107,8 @@ class Game(commands.Cog):
         #     txt += f"・{name}\n"
         # await ctx.send(f"{txt}```")
         cel = self
-        self.jobs = instant.job(cel,ctx)
+        self.jobs = self.instant.job(cel,ctx)
         await ctx.send(self.jobs)
-        print(self.jobs)
 
     @commands.command()
     async def join(self,ctx):
