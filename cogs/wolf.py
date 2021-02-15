@@ -92,7 +92,7 @@ class Game(commands.Cog):
         if self.on_game == True:
             return
         self.on_game = True
-        # make_channel = asyncio.create_task(self.instant.wolf(ctx))
+        # make_channel = asyncio.create_task(self.instant.make(ctx))
         add_member = asyncio.create_task(self.count(ctx))
         # await make_channel
         await add_member
@@ -108,7 +108,7 @@ class Game(commands.Cog):
         #     txt += f"・{name}\n"
         # await ctx.send(f"{txt}```")
         cel = self
-        self.jobs = self.instant.job(cel,ctx)
+        self.jobs = self.game.job(cel,ctx)
         await ctx.send(self.jobs)
         await self.game.call(cel,ctx)
         await self.game.box(cel,ctx,"＜未設定＞")
