@@ -23,8 +23,6 @@ class Wolf(commands.Cog):
         self.bot = bot
         self.joiner = False
         self.mems = {}
-        self.live = []
-        self.dead = []
         self.on_game = False
         self.on_voice = False
         self.instant = inst(bot)
