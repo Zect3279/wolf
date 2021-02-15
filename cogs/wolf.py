@@ -121,9 +121,9 @@ class Game(commands.Cog):
         if self.on_game == True:
             return
         self.on_game = True
-        make_channel = asyncio.create_task(self.instant.make(ctx))
+        # make_channel = asyncio.create_task(self.instant.make(ctx))
         add_member = asyncio.create_task(self.count(ctx))
-        await make_channel
+        # await make_channel
         await add_member
         if not self.mems:
             await ctx.send("no one")
@@ -139,22 +139,27 @@ class Game(commands.Cog):
         cel = self
         self.jobs = self.game.job(cel,ctx)
         await ctx.send(self.jobs)
-        await self.game.box(cel,ctx,"＜未設定＞")
+        # await self.game.box(cel,ctx,"＜未設定＞")
         await self.play(ctx)
 
 
 
     async def play(self,ctx):
         # print("play has called")
-        ids = mems.keys()
+        ids = self.jobs.keys()
+        print(ids)
         for id in ids:
+            print(id)
             job = self.jobs[id]
+            id = int(id)
             mem = ctx.guild.get_member(id)
+            print(mem)
             role = await ctx.guild.create_role(name=mem.name)
             chan = discord.utils.get(ctx.guild.text_channels, name=job)
             await chan.set_permissions(role,read_messages=True)
             await mem.add_roles(role)
 
+        cel = self
         await self.game.call(cel,ctx)
 
 

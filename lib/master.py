@@ -90,9 +90,9 @@ class Master():
         mems = cel.mems
         mem = len(mems.keys())
         role = self.select(mem)
-        print(role)
+        # print(role)
         random.shuffle(role)
-        print(role)
+        # print(role)
         job = {}
         ids = mems.keys()
         for i, id in enumerate(ids):
