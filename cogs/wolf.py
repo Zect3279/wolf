@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 
 import json
+import datetime
 import random
 import asyncio
 import os
@@ -13,10 +14,11 @@ import asyncio
 
 from lib.instant import inst
 from lib.master import Master
+from cogs.controller import Game
 
 
 
-class Game(commands.Cog):
+class Wolf(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.joiner = False
@@ -27,7 +29,12 @@ class Game(commands.Cog):
         self.on_voice = False
         self.instant = inst(bot)
         self.game = Master(bot)
+        self.cont = Game(bot)
 
+    def times(self):
+        dt_now = datetime.datetime.now()
+        txt = f"[{dt_now.hour}:{dt_now.minute}:{dt_now.second}]"
+        return txt
 
     @commands.command()
     async def end(self):
@@ -38,7 +45,8 @@ class Game(commands.Cog):
         self.on_voice = True
 
     @commands.command()
-    async def look(self,ctx):
+    async def look(self,ctx,member: discord.Member):
+        print(f"{self.times} [look] : {member.name} is able to look All-Channels!")
         role = discord.utils.get(ctx.guild.roles, name="観戦者")
         await member.add_roles(role)
         role = discord.utils.get(ctx.guild.roles, name="生存者")
@@ -48,6 +56,7 @@ class Game(commands.Cog):
 
     @commands.command()
     async def kill(self,ctx,member: discord.Member):
+        print(f"{self.times} [kill] : {member.name} is dead")
         role = discord.utils.get(ctx.guild.roles, name="生存者")
         await member.remove_roles(role)
         role = discord.utils.get(ctx.guild.roles, name="死亡者")
@@ -55,6 +64,7 @@ class Game(commands.Cog):
 
     @commands.command()
     async def live(self,ctx,member: discord.Member):
+        print(f"{self.times} [live] : {member.name} is alive!")
         role = discord.utils.get(ctx.guild.roles, name="死亡者")
         await member.remove_roles(role)
         role = discord.utils.get(ctx.guild.roles, name="生存者")
@@ -82,6 +92,7 @@ class Game(commands.Cog):
                 return
             role = discord.utils.get(before.channel.guild.roles, name="観戦者")
             await member.remove_roles(role)
+            print(f"{self.times} [Connection] : Removed {member.name} `s '観戦者'")
         except:
             a = "a"
         finally:
@@ -95,15 +106,18 @@ class Game(commands.Cog):
                 if role in member.roles:
                     channel = discord.utils.get(after.channel.guild.voice_channels, name="会議所")
                     await member.edit(voice_channel=channel)
+                    print(f"{self.times} [Connection] : {member.name} has connected into '会議所'")
                     return
                 role = discord.utils.get(after.channel.guild.roles, name="死亡者")
                 if role in member.roles:
                     channel = discord.utils.get(after.channel.guild.voice_channels, name="反省会")
+                    print(f"{self.times} [Connection] : {member.name} has connected into '反省会'")
                     await member.edit(voice_channel=channel)
                     return
                 channel = discord.utils.get(after.channel.guild.voice_channels, name="観戦中")
                 role = discord.utils.get(after.channel.guild.roles, name="観戦者")
                 await member.edit(voice_channel=channel)
+                print(f"{self.times} [Connection] : {member.name} has connected into '観戦中'")
                 await member.add_roles(role)
             except:
                 a = "a"
@@ -129,21 +143,23 @@ class Game(commands.Cog):
         await category.create_text_channel("総合チャット")
         voice = await category.create_voice_channel("総合チャット")
         await voice.edit(user_limit=99)
+        print(f"{self.times} [ready] : {ctx.author.name} has refreshed!")
 
     @commands.command()
     async def delete(self,ctx):
         if self.on_game == True:
             return
         await self.instant.dele(ctx)
+        print(f"{self.times} [delete] : {ctx.author.name} has deleted All!")
 
     async def count(self,ctx):
         self.joiner = 0
         self.mems = {}
         await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
-        edit = await ctx.send("開始まで10秒")
+        edit = await ctx.send("開始まで30秒")
         self.joiner = True
-        for i in range(10):
-            num = 10 - i
+        for i in range(30):
+            num = 30 - i
             await edit.edit(content=f"開始まで{num}秒")
             await asyncio.sleep(0.9)
         self.joiner = False
@@ -189,6 +205,7 @@ class Game(commands.Cog):
         await ctx.send(self.jobs)
         # await self.game.box(cel,ctx,"＜未設定＞")
         await self.play(ctx)
+        self.cont.on(self.jobs)
 
         # await self.end()
 
@@ -253,4 +270,4 @@ class Game(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Game(bot))
+    bot.add_cog(Wolf(bot))
