@@ -24,17 +24,18 @@ class Game(commands.Cog):
         self.live = []
         self.dead = []
         self.on_game = False
+        self.on_voice = False
         self.instant = inst(bot)
         self.game = Master(bot)
 
 
     @commands.command()
     async def end(self):
-        self.on_game = False
+        self.on_voice = False
 
     @commands.command()
     async def on(self,ctx):
-        self.on_game = True
+        self.on_voice = True
 
     @commands.command()
     async def look(self,ctx):
@@ -43,6 +44,20 @@ class Game(commands.Cog):
         role = discord.utils.get(ctx.guild.roles, name="生存者")
         await member.add_roles(role)
         role = discord.utils.get(ctx.guild.roles, name="死亡者")
+        await member.add_roles(role)
+
+    @commands.command()
+    async def kill(self,ctx,member: discord.Member):
+        role = discord.utils.get(ctx.guild.roles, name="生存者")
+        await member.remove_roles(role)
+        role = discord.utils.get(ctx.guild.roles, name="死亡者")
+        await member.add_roles(role)
+
+    @commands.command()
+    async def live(self,ctx,member: discord.Member):
+        role = discord.utils.get(ctx.guild.roles, name="死亡者")
+        await member.remove_roles(role)
+        role = discord.utils.get(ctx.guild.roles, name="生存者")
         await member.add_roles(role)
 
     @commands.Cog.listener()
@@ -55,7 +70,7 @@ class Game(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self,member,before,after):
-        if self.on_game == False:
+        if self.on_voice == False:
             return
         if before.channel == after.channel:
             return
@@ -77,7 +92,6 @@ class Game(commands.Cog):
                 if cname != "総合チャット":
                     return
                 role = discord.utils.get(after.channel.guild.roles, name="生存者")
-
                 if role in member.roles:
                     channel = discord.utils.get(after.channel.guild.voice_channels, name="会議所")
                     await member.edit(voice_channel=channel)
@@ -170,6 +184,7 @@ class Game(commands.Cog):
         #     txt += f"・{name}\n"
         # await ctx.send(f"{txt}```")
         cel = self
+        self.on_voice = True
         self.jobs = self.game.job(cel,ctx)
         await ctx.send(self.jobs)
         # await self.game.box(cel,ctx,"＜未設定＞")
