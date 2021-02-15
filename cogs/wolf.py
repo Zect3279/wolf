@@ -27,8 +27,23 @@ class Game(commands.Cog):
         self.instant = inst(bot)
         self.game = Master(bot)
 
-    def end(self):
+
+    @commands.command()
+    async def end(self):
         self.on_game = False
+
+    @commands.command()
+    async def on(self,ctx):
+        self.on_game = True
+
+    @commands.command()
+    async def look(self,ctx):
+        role = discord.utils.get(ctx.guild.roles, name="観戦者")
+        await member.add_roles(role)
+        role = discord.utils.get(ctx.guild.roles, name="生存者")
+        await member.add_roles(role)
+        role = discord.utils.get(ctx.guild.roles, name="死亡者")
+        await member.add_roles(role)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -42,17 +57,11 @@ class Game(commands.Cog):
     async def on_voice_state_update(self,member,before,after):
         if self.on_game == False:
             return
-        if after.channel.guild.id != 726233332655849514:
-            return
-        if before.channel.guild.id != 726233332655849514:
-            return
-        try:
-            Grole = discord.utils.get(before.channel.guild.roles, name="人狼参加者")
-        except:
-            return
         if before.channel == after.channel:
             return
         try:
+            if before.channel.guild.id != 726233332655849514:
+                return
             cname = before.channel.name
             if cname != "観戦中":
                 return
@@ -62,19 +71,24 @@ class Game(commands.Cog):
             a = "a"
         finally:
             try:
+                if after.channel.guild.id != 726233332655849514:
+                    return
                 cname = after.channel.name
                 if cname != "総合チャット":
                     return
-                role = discord.utils.get(before.channel.guild.roles, name="生存者")
+                role = discord.utils.get(after.channel.guild.roles, name="生存者")
+
                 if role in member.roles:
                     channel = discord.utils.get(after.channel.guild.voice_channels, name="会議所")
                     await member.edit(voice_channel=channel)
-                role = discord.utils.get(before.channel.guild.roles, name="死亡者")
+                    return
+                role = discord.utils.get(after.channel.guild.roles, name="死亡者")
                 if role in member.roles:
                     channel = discord.utils.get(after.channel.guild.voice_channels, name="反省会")
                     await member.edit(voice_channel=channel)
+                    return
                 channel = discord.utils.get(after.channel.guild.voice_channels, name="観戦中")
-                role = discord.utils.get(before.channel.guild.roles, name="観戦者")
+                role = discord.utils.get(after.channel.guild.roles, name="観戦者")
                 await member.edit(voice_channel=channel)
                 await member.add_roles(role)
             except:
@@ -161,7 +175,7 @@ class Game(commands.Cog):
         # await self.game.box(cel,ctx,"＜未設定＞")
         await self.play(ctx)
 
-        self.end()
+        # await self.end()
 
 
     async def play(self,ctx):

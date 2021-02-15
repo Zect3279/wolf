@@ -34,7 +34,9 @@ class Master():
         for id in cel.jobs.keys():
             mem = ctx.guild.get_member(id)
             chan = discord.utils.get(ctx.guild.voice_channels, name="会議所")
+            role = discord.utils.get(ctx.guild.roles, name="生存者")
             await mem.edit(voice_channel=chan)
+            await mem.add_roles(role)
 
 
     async def box(self,cel,ctx,title):
