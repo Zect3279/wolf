@@ -9,6 +9,7 @@ class Zect(commands.Bot):
         super().__init__(
             command_prefix=commands.when_mentioned_or(environ.get('PREFIX', '/')),
             help_command=None,
+            intents=discord.Intents.all(),
         )
 
     async def on_ready(self):
