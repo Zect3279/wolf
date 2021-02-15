@@ -60,6 +60,10 @@ class inst():
         await chan.set_permissions(ctx.guild.roles[0],read_messages=False)
         await chan.set_permissions(dead_role,read_messages=True)
         await chan.set_permissions(no_role,read_messages=True)
+        chan = await category.create_text_channel("てるてる")
+        await chan.set_permissions(ctx.guild.roles[0],read_messages=False)
+        await chan.set_permissions(dead_role,read_messages=True)
+        await chan.set_permissions(no_role,read_messages=True)
 
         category = await ctx.guild.create_category(name="死亡者")
         chan = await category.create_text_channel("反省会")
