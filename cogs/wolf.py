@@ -27,6 +27,8 @@ class Game(commands.Cog):
         self.instant = inst(bot)
         self.game = Master(bot)
 
+    def end(self):
+        self.on_game = False
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -36,36 +38,49 @@ class Game(commands.Cog):
     async def on_message(self, message):
         await dispand(message)
 
-    # @commands.Cog.listener()
-    # async def on_voice_state_update(self,member,before,after):
-    #     if after.channel.guild.name != "鯖改造":
-    #         return
-    #     Grole = discord.utils.get(before.channel.guild.roles, name="人狼参加者")
-    #     if before.channel == after.channel:
-    #         return
-    #     try:
-    #         cname = before.channel.name
-    #         if cname != "観戦中":
-    #             return
-    #         channel = discord.utils.get(before.channel.guild.voice_channels, name=cname)
-    #         role = discord.utils.get(before.channel.guild.roles, name=cname)
-    #         await member.remove_roles(role)
-    #         await channel.send(f"{member.name} が退出しました。")
-    #     except:
-    #         a = "a"
-    #     finally:
-    #         try:
-    #             cname = after.channel.name
-    #             if cname != "観戦中":
-    #                 return
-    #             channel = discord.utils.get(after.channel.guild.voice_channels, name=cname)
-    #             role = discord.utils.get(after.channel.guild.roles, name=cname)
-    #             await member.add_roles(role)
-    #             await channel.send(f"{member.name} が参加しました。")
-    #         except:
-    #             a = "a"
-    #         finally:
-    #             a = "a"
+    @commands.Cog.listener()
+    async def on_voice_state_update(self,member,before,after):
+        if self.on_game == False:
+            return
+        if after.channel.guild.id != 726233332655849514:
+            return
+        if before.channel.guild.id != 726233332655849514:
+            return
+        try:
+            Grole = discord.utils.get(before.channel.guild.roles, name="人狼参加者")
+        except:
+            return
+        if before.channel == after.channel:
+            return
+        try:
+            cname = before.channel.name
+            if cname != "観戦中":
+                return
+            role = discord.utils.get(before.channel.guild.roles, name="観戦者")
+            await member.remove_roles(role)
+        except:
+            a = "a"
+        finally:
+            try:
+                cname = after.channel.name
+                if cname != "総合チャット":
+                    return
+                role = discord.utils.get(before.channel.guild.roles, name="生存者")
+                if role in member.roles:
+                    channel = discord.utils.get(after.channel.guild.voice_channels, name="会議所")
+                    await member.edit(voice_channel=channel)
+                role = discord.utils.get(before.channel.guild.roles, name="死亡者")
+                if role in member.roles:
+                    channel = discord.utils.get(after.channel.guild.voice_channels, name="反省会")
+                    await member.edit(voice_channel=channel)
+                channel = discord.utils.get(after.channel.guild.voice_channels, name="観戦中")
+                role = discord.utils.get(before.channel.guild.roles, name="観戦者")
+                await member.edit(voice_channel=channel)
+                await member.add_roles(role)
+            except:
+                a = "a"
+            finally:
+                a = "a"
 
     @commands.command()
     async def ready(self,ctx):
@@ -114,9 +129,9 @@ class Game(commands.Cog):
         if ctx.author.id in self.mems:
             return
         self.mems[ctx.author.id] = ctx.author.name
-        chan = discord.utils.get(ctx.guild.voice_channels, name="総合チャット")
-        await ctx.author.edit(voice_channel=chan)
-        role = discord.utils.get(ctx.guild.fetch_roles, name="人狼参加者")
+        # chan = discord.utils.get(ctx.guild.voice_channels, name="総合チャット")
+        # await ctx.author.edit(voice_channel=chan)
+        role = discord.utils.get(ctx.guild.roles, name="人狼参加者")
         await ctx.author.add_roles(role)
         await ctx.message.add_reaction("⭕")
 
@@ -125,9 +140,9 @@ class Game(commands.Cog):
         if self.on_game == True:
             return
         self.on_game = True
-        # make_channel = asyncio.create_task(self.instant.make(ctx))
+        make_channel = asyncio.create_task(self.instant.make(ctx))
         add_member = asyncio.create_task(self.count(ctx))
-        # await make_channel
+        await make_channel
         await add_member
         if not self.mems:
             await ctx.send("no one")
@@ -146,6 +161,7 @@ class Game(commands.Cog):
         # await self.game.box(cel,ctx,"＜未設定＞")
         await self.play(ctx)
 
+        self.end()
 
 
     async def play(self,ctx):

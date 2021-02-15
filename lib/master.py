@@ -31,7 +31,6 @@ class Master():
             await channel.send(f"<@{id}> あなたは、 __{role}__ です。")
 
     async def move(self,cel,ctx):
-        print("VCの強制移動")
         for id in cel.jobs.keys():
             mem = ctx.guild.get_member(id)
             chan = discord.utils.get(ctx.guild.voice_channels, name="会議所")
