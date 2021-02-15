@@ -88,6 +88,35 @@ class Game(commands.Cog):
         await voice.edit(user_limit=99)
 
     @commands.command()
+    async def delete(self,ctx):
+        if self.on_game == True:
+            return
+        await self.instant.dele(ctx)
+
+    async def count(self,ctx):
+        self.joiner = 0
+        self.mems = {}
+        await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
+        edit = await ctx.send("開始まで10秒")
+        self.joiner = True
+        for i in range(10):
+            num = 10 - i
+            await edit.edit(content=f"開始まで{num}秒")
+            await asyncio.sleep(0.9)
+        self.joiner = False
+        await edit.delete()
+        await ctx.send("参加者が決定しました。")
+
+    @commands.command()
+    async def join(self,ctx):
+        if self.joiner == False:
+            return
+        if ctx.author.id in self.mems:
+            return
+        self.mems[ctx.author.id] = ctx.author.name
+        await ctx.message.add_reaction("⭕")
+
+    @commands.command()
     async def start(self,ctx):
         if self.on_game == True:
             return
@@ -112,41 +141,12 @@ class Game(commands.Cog):
         await ctx.send(self.jobs)
         await self.game.call(cel,ctx)
         await self.game.box(cel,ctx,"＜未設定＞")
-        # await self.play(ctx)
+        await self.play(ctx)
 
-    @commands.command()
-    async def join(self,ctx):
-        if self.joiner == False:
-            return
-        if ctx.author.id in self.mems:
-            return
-        self.mems[ctx.author.id] = ctx.author.name
-        await ctx.message.add_reaction("⭕")
 
-    # @commands.command()
-    # async def play(self,ctx):
-    #     print("play has called")
 
-    @commands.command()
-    async def delete(self,ctx):
-        if self.on_game == True:
-            return
-        await self.instant.dele(ctx)
-
-    async def count(self,ctx):
-        self.joiner = 0
-        self.mems = {}
-        await ctx.send("開始を確認...\n参加希望の方は、`/join` と入力してください。")
-        edit = await ctx.send("開始まで10秒")
-        self.joiner = True
-        for i in range(10):
-            num = 10 - i
-            await edit.edit(content=f"開始まで{num}秒")
-            await asyncio.sleep(0.9)
-        self.joiner = False
-        await edit.delete()
-        await ctx.send("参加者が決定しました。")
-
+    async def play(self,ctx):
+        print("play has called")
 
 
 
