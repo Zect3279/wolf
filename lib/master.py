@@ -30,6 +30,14 @@ class Master():
             channel = discord.utils.get(ctx.guild.text_channels, name=role)
             await channel.send(f"<@{id}> あなたは、 __{role}__ です。")
 
+    async def move(self,cel,ctx):
+        print("VCの強制移動")
+        for id in cel.jobs.keys():
+            mem = ctx.guild.get_member(id)
+            chan = discord.utils.get(ctx.guild.voice_channels, name="会議所")
+            await mem.edit(voice_channel=chan)
+
+
     async def box(self,cel,ctx,title):
         txt = ""
         for i, id in enumerate(cel.jobs.keys()):

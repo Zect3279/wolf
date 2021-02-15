@@ -114,6 +114,10 @@ class Game(commands.Cog):
         if ctx.author.id in self.mems:
             return
         self.mems[ctx.author.id] = ctx.author.name
+        chan = discord.utils.get(ctx.guild.voice_channels, name="総合チャット")
+        await ctx.author.edit(voice_channel=chan)
+        role = discord.utils.get(ctx.guild.fetch_roles, name="人狼参加者")
+        await ctx.author.add_roles(role)
         await ctx.message.add_reaction("⭕")
 
     @commands.command()
@@ -145,21 +149,19 @@ class Game(commands.Cog):
 
 
     async def play(self,ctx):
-        # print("play has called")
         ids = self.jobs.keys()
-        print(ids)
         for id in ids:
-            print(id)
             job = self.jobs[id]
-            id = int(id)
             mem = ctx.guild.get_member(id)
-            print(mem)
             role = await ctx.guild.create_role(name=mem.name)
             chan = discord.utils.get(ctx.guild.text_channels, name=job)
             await chan.set_permissions(role,read_messages=True)
             await mem.add_roles(role)
 
         cel = self
+        await self.game.move(cel,ctx)
+        channel = discord.utils.get(ctx.guild.text_channels, name="会議所")
+        await channel.send("@everyone\n全員に役職を付与しました。\nそれぞれの専用チャンネルにてメンションが飛びます。\n確認してください。")
         await self.game.call(cel,ctx)
 
 
