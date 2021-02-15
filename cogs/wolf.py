@@ -121,9 +121,9 @@ class Game(commands.Cog):
         if self.on_game == True:
             return
         self.on_game = True
-        # make_channel = asyncio.create_task(self.instant.make(ctx))
+        make_channel = asyncio.create_task(self.instant.make(ctx))
         add_member = asyncio.create_task(self.count(ctx))
-        # await make_channel
+        await make_channel
         await add_member
         if not self.mems:
             await ctx.send("no one")
