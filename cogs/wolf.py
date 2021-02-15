@@ -139,14 +139,23 @@ class Game(commands.Cog):
         cel = self
         self.jobs = self.game.job(cel,ctx)
         await ctx.send(self.jobs)
-        await self.game.call(cel,ctx)
         await self.game.box(cel,ctx,"＜未設定＞")
         await self.play(ctx)
 
 
 
     async def play(self,ctx):
-        print("play has called")
+        # print("play has called")
+        ids = mems.keys()
+        for id in ids:
+            job = self.jobs[id]
+            mem = ctx.guild.get_member(id)
+            role = await ctx.guild.create_role(name=mem.name)
+            chan = discord.utils.get(ctx.guild.text_channels, name=job)
+            await chan.set_permissions(role,read_messages=True)
+            await mem.add_roles(role)
+
+        await self.game.call(cel,ctx)
 
 
 
