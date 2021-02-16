@@ -27,6 +27,10 @@ class inst():
 
         # self.mems = await lol.cho(self.mems)
 
+        category = await ctx.guild.create_category(name="人狼ゲーム")
+        voice = await category.create_voice_channel("移動用")
+        await voice.edit(user_limit=50)
+
         category = await ctx.guild.create_category(name="生存者")
         chan = await category.create_text_channel("会議所")
         await chan.set_permissions(ctx.guild.roles[0],read_messages=False)

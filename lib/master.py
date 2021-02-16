@@ -33,11 +33,10 @@ class Master():
     async def move(self,cel,ctx):
         for id in cel.jobs.keys():
             mem = ctx.guild.get_member(id)
-            chan = discord.utils.get(ctx.guild.voice_channels, name="会議所")
             role = discord.utils.get(ctx.guild.roles, name="生存者")
-            await mem.edit(voice_channel=chan)
             await mem.add_roles(role)
-
+            chan = discord.utils.get(ctx.guild.voice_channels, name="移動用")
+            await mem.edit(voice_channel=chan)
 
     async def box(self,cel,ctx,title):
         txt = ""

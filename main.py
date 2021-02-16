@@ -11,6 +11,7 @@ extensions = [
     # "cogs.help",
     "cogs.wolf",
     "cogs.controller",
+    "cogs.test",
 ]
 for extension in extensions:
     bot.load_extension(extension)
