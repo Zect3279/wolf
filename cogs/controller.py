@@ -100,7 +100,6 @@ class Game(commands.Cog):
         if message.content == "/start":
             self.yes()
 
-
     @commands.command()
     async def look(self,ctx,member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name="観戦者")
