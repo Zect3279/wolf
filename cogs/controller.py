@@ -24,6 +24,8 @@ class Game(commands.Cog):
         self.jobs = {}
         self.live = []
         self.dead = []
+        self.count = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T"]
+        self.ment = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱","🇲","🇳","🇴","🇵","🇶","🇷","🇸","🇹",]
         self.on_game = False
         self.instant = inst(bot)
         self.game = Master(bot)
@@ -93,6 +95,12 @@ class Game(commands.Cog):
     async def open(self,ctx):
         self.yes()
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.content == "/start":
+            self.yes()
+
+
     @commands.command()
     async def look(self,ctx,member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name="観戦者")
@@ -125,6 +133,17 @@ class Game(commands.Cog):
             print("I am False")
             return
 
+    async def box(self,chan,title):
+        txt = ""
+        for i, id in enumerate(self.jobs.keys()):
+            txt += f"\n{self.count[i]}. <@{id}>"
+
+        test = discord.Embed(title=title,colour=0x1e90ff)
+        test.add_field(name="プレイヤー一覧", value=txt, inline=True)
+        msg = await chan.send(embed=test)
+
+        for i, id in enumerate(self.jobs.keys()):
+            await msg.add_reaction(self.ment[i])
 
     async def play(self,ctx):
         ids = self.jobs.keys()
@@ -142,21 +161,28 @@ class Game(commands.Cog):
         await channel.send("@everyone\n全員に役職を付与しました。\nそれぞれの専用チャンネルにてメンションが飛びます。\n確認してください。")
         await self.game.call(cel,ctx)
 
+
     async def on(self,ctx,jobs):
         self.yes()
         self.jobs = jobs
-        print(self.jobs)
+        # print(self.jobs)
         await self.start(ctx)
 
     async def start(self,ctx):
         await ctx.send("ゲームが開始されました。")
         await self.play(ctx)
-        # await asyncio.gather(
-        #     self.wolf(ctx),
-        #     self.fortun(ctx)
-        # )
+        await asyncio.gather(
+            self.wolf(ctx),
+            self.fortun(ctx)
+        )
 
+    async def wolf(self,ctx):
+        chan = discord.utils.get(ctx.guild.text_channels, name="人狼")
+        await self.box(chan,"殺害する人を選択してください。")
 
+    async def fortun(self,ctx):
+        chan = discord.utils.get(ctx.guild.text_channels, name="占い師")
+        await self.box(chan,"占う人を選択してください。")
 
 
 
