@@ -188,15 +188,25 @@ class Game(commands.Cog):
         self.wolf(ctx,role_list),
         self.fortun(ctx,role_list),
         )
-        await self.loooop()
-        await asyncio.gather(
-        self.move_wolf(self.wolf_flag),
-        self.move_fortun(self.fortun_flag)
-        )
+        try:
+            await asyncio.wait_for(self.loooop(), timeout=30.0)
+        except asyncio.TimeoutError:
+            if self.wolf_can_move == True:
+                await self.channel_wolf.send("時間が過ぎた")
+                self.wolf_can_move = False
+            if self.fortun_can_move == True:
+                await self.channel_foutune.send("時間が過ぎた")
+                self.fortun_can_move = False
+            self.move_wait = False
+        finally:
+            await asyncio.gather(
+            self.move_wolf(self.wolf_flag),
+            self.move_fortun(self.fortun_flag)
+            )
 
-        channel = discord.utils.get(ctx.guild.text_channels, name="会議所")
-        await channel.send("一夜目終了")
-        print("finish")
+            channel = discord.utils.get(ctx.guild.text_channels, name="会議所")
+            await channel.send("一夜目終了")
+            print("finish")
 
     async def loooop(self):
         self.move_wait = True
