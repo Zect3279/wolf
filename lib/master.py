@@ -33,7 +33,7 @@ class Master():
     def select(self,mem):
         if mem == 1:
             # return ["市民", "人狼"]
-            return ["人狼", "人狼"]
+            return ["占い師", "人狼"]
         if mem == 2:
             return ["市民", "人狼"]
         if mem == 3:

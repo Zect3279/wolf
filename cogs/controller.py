@@ -23,8 +23,8 @@ class Game(commands.Cog):
         self.bot = bot
         self.joiner = False
         self.jobs = {}
-        self.live.mem = {}
-        self.dead.mem = {}
+        self.live = {}
+        self.dead = {}
         self.count = ["B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T"]
         self.ment = ["🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱","🇲","🇳","🇴","🇵","🇶","🇷","🇸","🇹",]
         self.on_game = False
@@ -136,7 +136,7 @@ class Game(commands.Cog):
     async def on(self,ctx,jobs):
         self.yes()
         self.jobs = jobs
-        self.live.mem = self.jobs
+        self.live = self.jobs
         await self.start(ctx)
 
     async def start(self,ctx):
@@ -149,13 +149,13 @@ class Game(commands.Cog):
         await self.manage(ctx)
 
     async def set_channel(self,ctx):
-        self.cit.channel = discord.utils.get(ctx.guild.text_channels, name="市民")
-        self.wolf.channel = discord.utils.get(ctx.guild.text_channels, name="人狼")
-        self.fortun.channel = discord.utils.get(ctx.guild.text_channels, name="占い師")
+        self.channel_cit = discord.utils.get(ctx.guild.text_channels, name="市民")
+        self.channel_wolf = discord.utils.get(ctx.guild.text_channels, name="人狼")
+        self.channel_fortun = discord.utils.get(ctx.guild.text_channels, name="占い師")
 
     async def set_role(self,ctx):
-        self.live.role = discord.utils.get(ctx.guild.roles, name="生存者")
-        self.dead.role = discord.utils.get(ctx.guild.roles, name="死亡者")
+        self.role_live = discord.utils.get(ctx.guild.roles, name="生存者")
+        self.role_dead = discord.utils.get(ctx.guild.roles, name="死亡者")
 
     async def play(self,ctx):
         for id in self.jobs.keys():
@@ -169,7 +169,7 @@ class Game(commands.Cog):
         cel = self
         await self.game.move(cel,ctx)
         channel = discord.utils.get(ctx.guild.text_channels, name="会議所")
-        await channel.send("@everyone\n全員に役職を付与しました。\nそれぞれの専用チャンネルにてメンションが飛びます。\n確認してください。\n__（市民の方にはメンションは飛んでません）__")
+        await channel.send("@everyone\n全員に役職を付与しました。\nそれぞれの専用チャンネルにてメンションが飛びます。\n確認してください。\n（市民の方にはメンションは飛んでません）")
         await self.call(cel,ctx)
 
     async def call(self,cel,ctx):
@@ -182,29 +182,38 @@ class Game(commands.Cog):
 
     async def manage(self,ctx):
         print("Game will start")
-        role_list = self.live.mem.values()
+        role_list = self.live.values()
 
         await asyncio.gather(
         self.wolf(ctx,role_list),
         self.fortun(ctx,role_list),
         )
-
-        self.move_wait = True
-        while self.move_wait == True:
-            if self.wolf.can_move == True:
-                continue
-            if self.fortun.can_move == True:
-                continue
-            self.move_wait = False
-
+        await self.loooop()
         await asyncio.gather(
-        self.move_wolf(self.wolf.flag),
-        self.move_fortun(self.fortun.flag)
+        self.move_wolf(self.wolf_flag),
+        self.move_fortun(self.fortun_flag)
         )
 
         channel = discord.utils.get(ctx.guild.text_channels, name="会議所")
         await channel.send("一夜目終了")
         print("finish")
+
+    async def loooop(self):
+        self.move_wait = True
+        self.wolf_can_move = True
+        self.fortun_can_move = True
+        print("loop start")
+        while self.move_wait == True:
+            if self.wolf_can_move == True:
+                # print("continue wolf")
+                continue
+            elif self.fortun_can_move == True:
+                # print("continue fortun")
+                continue
+            else:
+                print("false")
+                self.move_wait = False
+
 
     async def box(self,chan,title):
         txt = "A. 誰も選択しない"
@@ -220,65 +229,73 @@ class Game(commands.Cog):
             await msg.add_reaction(self.ment[i])
 
     async def wolf(self,ctx,role):
+        print(role)
         if "人狼" not in role:
-            self.wolf.can_move = False
-            self.wolf.flag = None
+            print("not wolf")
+            self.wolf_can_move = False
+            self.wolf_flag = None
             return
-        self.wolf.can_move = True
-        await self.box(self.wolf.channel,"殺害する人を選択してください。")
+        await self.box(self.channel_wolf,"殺害する人を選択してください。")
 
     async def fortun(self,ctx,role):
+        print(role)
         if "占い師" not in role:
-            self.fortun.can_move = False
-            self.fortun.flag = None
+            print("not fortun")
+            self.fortun_can_move = False
+            self.fortun_flag = None
             return
-        self.fortun.can_move = True
-        await self.box(self.fortun.channel,"占う人を選択してください。")
+        await self.box(self.channel_fortun,"占う人を選択してください。")
 
 
     async def move_wolf(self,mem):
+        print("kill")
         if mem == None:
             return
-        await mem.remove_roles(self.live.role)
-        await mem.add_roles(self.dead.role)
+        await mem.remove_roles(self.role_live)
+        await mem.add_roles(self.role_dead)
         await self.wolf.channel.send(f"<@{mem.id}> の殺害が完了しました。")
 
     async def move_fortun(self,mem):
+        print("look")
         if mem == None:
             return
         print("a")
-        role = self.live.mem[mem.id]
+        role = self.live[mem.id]
         if role == "人狼":
             bw = "黒"
         else:
             bw = "白"
-        await self.fortun.channel.send(f"<@{mem.id}> は __{bw}__ です")
+        await self.channel_fortun.send(f"<@{mem.id}> は __{bw}__ です")
 
 
     @commands.Cog.listener()
     async def on_reaction_add(self,reaction,user):
+        print("called")
         u_id = user.id
-        if u_id not in self.live.mem.keys():
+        if u_id not in self.live.keys():
+            print("role return")
             return
-        if self.live.mem[u_id] == "人狼":
-            self.wolf.can_move = False
+        if self.live[u_id] == "人狼":
+            print("wolf")
+            self.wolf_can_move = False
             if str(reaction.emoji) == '🇦':
-                await self.wolf.channel.send(f"誰も殺害しませんでした。")
-                self.wolf.flag = None
+                await self.channel_wolf.send(f"誰も殺害しませんでした。")
+                self.wolf_flag = None
                 return
             else:
-                await self.wolf.channel.send(f"<@{user.id}> を殺害します。")
-                self.wolf.flag = user
+                await self.channel_wolf.send(f"<@{user.id}> を殺害します。")
+                self.wolf_flag = user
                 return
-        if self.live.mem[u_id] == "占い師":
-            self.fortun.can_move = False
+        if self.live[u_id] == "占い師":
+            print("fortun")
+            self.fortun_can_move = False
             if str(reaction.emoji) == '🇦':
-                await self.fortun.channel.send(f"誰も占いませんでした。")
-                self.fortun.flag = None
+                await self.channel_fortun.send(f"誰も占いませんでした。")
+                self.fortun_flag = None
                 return
             else:
-                await self.fortun.channel.send(f"<@{user.id}> を占います。")
-                self.fortun.flag = user
+                await self.channel_fortun.send(f"<@{user.id}> を占います。")
+                self.fortun_flag = user
                 return
 
 
