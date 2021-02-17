@@ -22,12 +22,6 @@ class Master():
     async def yes(self,ctx):
         print("yes")
 
-    async def call(self,cel,ctx):
-        for id in cel.jobs.keys():
-            role = cel.jobs[id]
-            channel = discord.utils.get(ctx.guild.text_channels, name=role)
-            await channel.send(f"<@{id}> あなたは、 __{role}__ です。")
-
     async def move(self,cel,ctx):
         for id in cel.jobs.keys():
             mem = ctx.guild.get_member(id)

@@ -45,40 +45,40 @@ class Game(commands.Cog):
                 return
             role = discord.utils.get(before.channel.guild.roles, name="観戦者")
             await member.remove_roles(role)
-            print(f"{self.times} [Connection] : Removed {member.name} `s '観戦者'")
+            # print(f"{self.times} [Connection] : Removed {member.name} `s '観戦者'")
         except:
             a = "a"
         finally:
             try:
                 if after.channel.guild.id != 726233332655849514:
-                    print(0)
+                    # print(0)
                     return
                 cname = after.channel.name
                 if cname != "移動用":
-                    print(1)
+                    # print(1)
                     return
                 role = discord.utils.get(after.channel.guild.roles, name="生存者")
                 if role in member.roles:
                     channel = discord.utils.get(after.channel.guild.voice_channels, name="会議所")
                     await member.edit(voice_channel=channel)
-                    print(f"{self.times} [Connection] : {member.name} has connected into '会議所'")
+                    # print(f"{self.times} [Connection] : {member.name} has connected into '会議所'")
                     return
                 role = discord.utils.get(after.channel.guild.roles, name="死亡者")
                 if role in member.roles:
                     channel = discord.utils.get(after.channel.guild.voice_channels, name="反省会")
-                    print(f"{self.times} [Connection] : {member.name} has connected into '反省会'")
+                    # print(f"{self.times} [Connection] : {member.name} has connected into '反省会'")
                     await member.edit(voice_channel=channel)
                     return
                 channel = discord.utils.get(after.channel.guild.voice_channels, name="観戦中")
                 role = discord.utils.get(after.channel.guild.roles, name="観戦者")
                 await member.edit(voice_channel=channel)
-                print(f"{self.times} [Connection] : {member.name} has connected into '観戦中'")
+                # print(f"{self.times} [Connection] : {member.name} has connected into '観戦中'")
                 await member.add_roles(role)
             except:
-                print(2)
+                # print(2)
                 a = "a"
             finally:
-                print(3)
+                # print(3)
                 a = "a"
 
     def yes(self):
@@ -132,17 +132,11 @@ class Game(commands.Cog):
             print("I am False")
             return
 
-    async def box(self,chan,title):
-        txt = ""
-        for i, id in enumerate(self.jobs.keys()):
-            txt += f"\n{self.count[i]}. <@{id}>"
-
-        test = discord.Embed(title=title,colour=0x1e90ff)
-        test.add_field(name="プレイヤー一覧", value=txt, inline=True)
-        msg = await chan.send(embed=test)
-
-        for i, id in enumerate(self.jobs.keys()):
-            await msg.add_reaction(self.ment[i])
+    async def call(self,cel,ctx):
+        for id in cel.jobs.keys():
+            role = cel.jobs[id]
+            channel = discord.utils.get(ctx.guild.text_channels, name=role)
+            await channel.send(f"<@{id}> あなたは、 __{role}__ です。")
 
     async def play(self,ctx):
         ids = self.jobs.keys()
@@ -158,8 +152,19 @@ class Game(commands.Cog):
         await self.game.move(cel,ctx)
         channel = discord.utils.get(ctx.guild.text_channels, name="会議所")
         await channel.send("@everyone\n全員に役職を付与しました。\nそれぞれの専用チャンネルにてメンションが飛びます。\n確認してください。")
-        await self.game.call(cel,ctx)
+        await self.call(cel,ctx)
 
+    async def box(self,chan,title):
+        txt = ""
+        for i, id in enumerate(self.jobs.keys()):
+            txt += f"\n{self.count[i]}. <@{id}>"
+
+        test = discord.Embed(title=title,colour=0x1e90ff)
+        test.add_field(name="プレイヤー一覧", value=txt, inline=True)
+        msg = await chan.send(embed=test)
+
+        for i, id in enumerate(self.jobs.keys()):
+            await msg.add_reaction(self.ment[i])
 
     async def on(self,ctx,jobs):
         self.yes()
