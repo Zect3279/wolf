@@ -22,10 +22,11 @@ class Game(commands.Cog):
         self.bot = bot
         self.joiner = False
         self.jobs = {}
+        self.roles = [self.wolf, self.fortun]
         self.live = []
         self.dead = []
-        self.count = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T"]
-        self.ment = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱","🇲","🇳","🇴","🇵","🇶","🇷","🇸","🇹",]
+        self.count = [B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T"]
+        self.ment = ["🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱","🇲","🇳","🇴","🇵","🇶","🇷","🇸","🇹",]
         self.on_game = False
         self.instant = inst(bot)
         self.game = Master(bot)
@@ -155,14 +156,15 @@ class Game(commands.Cog):
         await self.call(cel,ctx)
 
     async def box(self,chan,title):
-        txt = ""
+        txt = "A. 誰も選択しない"
         for i, id in enumerate(self.jobs.keys()):
             txt += f"\n{self.count[i]}. <@{id}>"
 
         test = discord.Embed(title=title,colour=0x1e90ff)
-        test.add_field(name="プレイヤー一覧", value=txt, inline=True)
+        test.add_field(name=title, value=txt, inline=True)
         msg = await chan.send(embed=test)
 
+        await msg.add_reaction('🇦')
         for i, id in enumerate(self.jobs.keys()):
             await msg.add_reaction(self.ment[i])
 
@@ -175,18 +177,36 @@ class Game(commands.Cog):
     async def start(self,ctx):
         await ctx.send("ゲームが開始されました。")
         await self.play(ctx)
-        await asyncio.gather(
-            self.wolf(ctx),
-            self.fortun(ctx)
-        )
+        # await asyncio.gather()
+        await self.manage(ctx)
 
-    async def wolf(self,ctx):
+    async def wolf(self,ctx,role):
+        if "人狼" not in role:
+            return
         chan = discord.utils.get(ctx.guild.text_channels, name="人狼")
         await self.box(chan,"殺害する人を選択してください。")
+        # 待ち処理
+        # self.flag_wolf = True
 
-    async def fortun(self,ctx):
+    async def fortun(self,ctx,role):
+        if "占い師" not in role:
+            return
         chan = discord.utils.get(ctx.guild.text_channels, name="占い師")
         await self.box(chan,"占う人を選択してください。")
+        # 待ち処理
+        # self.flag_fortun = True
+
+
+
+
+
+    async def manage(self,ctx):
+        print("Game will start")
+        role_list = self.jobs.values()
+        await asyncio.gather(
+        self.wolf(ctx,role_list),
+        self.fortun(ctx,role_list),
+        )
 
 
 
